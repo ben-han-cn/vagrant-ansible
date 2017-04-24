@@ -1,0 +1,30 @@
+---
+
+- name: install base packages
+  apt: package={{ item }} update_cache=yes  force=yes state=latest
+  with_items:
+    - openssl
+    - libssl-dev
+    - ntp
+    - htop
+    - git
+    - libreadline-dev
+
+- name: add ssh key 
+  become: no
+  copy:
+    src: id_rsa
+    dest: /home/vagrant/.ssh/id_rsa
+    mode: 0700
+
+- name: add basic command
+  become: no
+  copy:
+    src: bashrc
+    dest: /home/vagrant/.bashrc
+    mode: 0655
+
+- name: set dns name server
+  copy:
+    src: resolv.conf
+    dest: /etc/resolv.conf

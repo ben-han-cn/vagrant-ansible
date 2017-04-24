@@ -1,0 +1,29 @@
+---
+- name: copy python3.5
+  copy: 
+    src: Python-3.5.0.tgz
+    dest: /tmp
+
+- name: unarchive python3.5
+  unarchive:
+    src: /tmp/Python-3.5.0.tgz
+    dest: /tmp
+    copy: no
+
+- name: build and install python3.5
+  shell: cd /tmp/Python-3.5.0; {{ item }}
+  with_items:
+    - ./configure
+    - make
+    - make install
+
+- name: make python3 default
+  copy:
+    src: make-python3-default.sh
+    dest: /etc/profile.d
+
+- name: update pip
+  shell: pip3 install --upgrade pip
+
+- name: install virtualenv
+  shell: pip install virtualenv

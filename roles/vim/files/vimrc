@@ -1,0 +1,31 @@
+filetype plugin on
+filetype indent on
+
+execute pathogen#infect()
+set number
+set smartcase
+
+set noerrorbells
+set novisualbell
+set tm=500
+
+
+syntax enable
+set encoding=utf8
+
+set expandtab
+set shiftwidth=4
+set tabstop=4
+set smarttab
+set shiftround
+set nojoinspaces
+
+set ruler
+
+let mapleader = ","
+nnoremap <leader><space> :noh<cr>
+inoremap jj <ESC>
+nnoremap rr :!ruby %<CR>
+nnoremap ne :lnext<CR>
+nnoremap pe :lprev<CR>
+nnoremap <leader>" viw<esc>a"<esc>hbi"<esc>lel

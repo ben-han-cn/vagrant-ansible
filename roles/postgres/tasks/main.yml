@@ -1,0 +1,36 @@
+---
+- name: copy postgresql-9.5
+  copy: 
+    src: postgresql-9.5.4.tar.gz
+    dest: /tmp
+
+- name: unarchive postgres
+  unarchive:
+    src: /tmp/postgresql-9.5.4.tar.gz
+    dest: /tmp
+    copy: no
+
+- name: build and install postgres
+  shell: cd /tmp/postgresql-9.5.4; {{ item }}
+  with_items:
+    - ./configure
+    - make
+    - make install
+    - ldconfig
+  
+- name: set postgres env
+  copy: 
+    src: set-postgres-env.sh
+    dest: /etc/profile.d
+
+- name: create postgres group
+  group:
+    name: postgres
+    state: present
+
+- name: create postgres user
+  user:
+    name: zdns
+    createhome: yes
+    groups: postgres
+    append: yes

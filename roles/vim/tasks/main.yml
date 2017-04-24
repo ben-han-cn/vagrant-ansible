@@ -1,0 +1,13 @@
+---
+
+- name: install pathogen
+  become: no
+  shell: mkdir -p /home/vagrant/.vim/autoload /home/vagrant/.vim/bundle && curl -LSso /home/vagrant/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+  args:
+    creates: /home/vagrant/.vim/bundle
+
+- name: set vim env
+  become: no
+  copy:
+    src: vimrc
+    dest: /home/vagrant/.vimrc

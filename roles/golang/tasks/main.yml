@@ -1,0 +1,71 @@
+---
+- name: copy go1.7
+  copy: 
+    src: go1.7.1.linux-amd64.tar.gz
+    dest: /tmp
+
+- name: install go1.7
+  unarchive:
+    src: /tmp/go1.7.1.linux-amd64.tar.gz
+    dest: /usr/local
+    copy: no
+
+- name: create go src folder
+  become: no
+  file:
+    path: /home/vagrant/workspace/code/go/src
+    state: directory
+
+- name: set go env
+  copy: 
+    src: set-go-env.sh
+    dest: /etc/profile.d
+
+- name: clone the base lib
+  become: no
+  git:
+    repo: ssh://zdns@10.0.0.30:/var/chengdu/git/{{ item }}.git
+    dest: /home/vagrant/workspace/code/go/src/{{ item }}
+    accept_hostkey: yes
+  with_items:
+    - vanguard
+    - cement
+    - quark
+    - sq
+    - sqd
+    - g53
+
+- name: clone third party lib
+  become: no
+  git:
+    repo: ssh://zdns@10.0.0.30:/var/chengdu/git/{{ item.name }}.git
+    dest: /home/vagrant/workspace/code/go/src/{{ item.dir }}/{{ item.name }}
+    accept_hostkey: yes
+  with_items:
+    - { name: 'influxdb', dir: 'github.com/influxdata' }
+    - { name: 'gopacket', dir: 'github.com/google' }
+    - { name: 'stolon', dir: 'github.com/sorintlab' }
+    - { name: 'raft', dir: 'github.com/hashicorp' }
+    - { name: 'memberlist', dir: 'github.com/hashicorp' }
+    - { name: 'go-immutable-radix', dir: 'github.com/hashicorp' }
+    - { name: 'leadership', dir: 'github.com/docker' }
+    - { name: 'libkv', dir: 'github.com/docker' }
+    - { name: 'etcd', dir: 'github.com/coreos' }
+    - { name: 'go-metrics', dir: 'github.com/rcrowley' }
+
+- name: get third party lib
+  become: no
+  shell: source /etc/profile.d/set-go-env.sh && go get {{ item }}
+  with_items:
+    -  'github.com/ugorji/go/codec' 
+    -  'golang.org/x/net' 
+  args:
+    executable: /bin/bash
+  ignore_errors: yes
+
+- name: install go vim plugin
+  become: no
+  git:
+    repo: https://github.com/fatih/vim-go.git 
+    dest: /home/vagrant/.vim/bundle/vim-go
+    accept_hostkey: yes
